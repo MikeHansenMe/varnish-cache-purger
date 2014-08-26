@@ -9,34 +9,26 @@ function vp_purge_now() {
 	
 		$vpip = $_SERVER['SERVER_ADDR'];
 		$page = $_POST['vp_page'];
-		$args = array(
-			'method'	=> 'PURGE',
-			'headers'	=> array(
-						'host'			=> $vpip,
-						'X-Purge-Method'	=> 'default',
-						)
-			);
 
 		if( empty( $_POST['vp_page'] ) ) {
 			add_action( 'admin_notices', 'vp_url_req' );
 			return;
 		} else {
-//			$res = curl_init( $page );
-//			curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'PURGE' );
-//			curl_exec( $res );
-//			curl_close( $res );
+			$res = curl_init( $page );
+			curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
+			curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'PURGE' );
+			$content = curl_exec( $res );
+			$code = curl_getinfo( $res, CURLINFO_HTTP_CODE );
+			curl_close( $res );
 
-
-			$res = wp_remote_request( $page, array( 'method' => 'PURGE', 'headers' => array( 'host' => $vpip ) ) );
-			print_r( $res );
-			if ( ! is_wp_error( $res ) ) {
-				if( $res['response']['code'] == '404' ) {
+			if ( ! empty( $code ) ) {
+				if( $code == '404' ) {
 					add_action( 'admin_notices', 'vp_404' );
 					return;
-				} else if ( $res['response']['code'] == '405' ) {
+				} else if ( $code == '405' ) {
 					add_action( 'admin_notices', 'vp_405' );
 					return;
-				} else if ( $res['response']['code'] == '200' ) {
+				} else if ( $code == '200' ) {
 					add_action( 'admin_notices', 'vp_200' );
 					return;
 				} else {
@@ -52,7 +44,7 @@ function vp_purge_now() {
 
 function vp_main_menu() {
 
-	echo '<form action="admin.php?page=varnish-purger" method="POST">
+	echo '<form name="varnish-purge" action="admin.php?page=varnish-purger" method="POST">
 		<input type="text" name="vp_page" placeholder="Enter URL" />
 		<input type="hidden" name="vp_purge" value="true" />
 		<input type="submit" name="vp_submit" value="Purge Now" />
