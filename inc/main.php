@@ -18,17 +18,17 @@ function vp_purge_now() {
 			curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
 			curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'PURGE' );
 			$content = curl_exec( $res );
-			$code = curl_getinfo( $res, CURLINFO_HTTP_CODE );
+			$info = curl_getinfo( $res );
 			curl_close( $res );
 
-			if ( ! empty( $code ) ) {
-				if( $code == '404' ) {
+			if ( ! empty( $info ) ) {
+				if( $info['http_code'] == '404' ) {
 					add_action( 'admin_notices', 'vp_404' );
 					return;
-				} else if ( $code == '405' ) {
+				} else if ( $info['http_code'] == '405' ) {
 					add_action( 'admin_notices', 'vp_405' );
 					return;
-				} else if ( $code == '200' ) {
+				} else if ( $info['http_code'] == '200' ) {
 					add_action( 'admin_notices', 'vp_200' );
 					return;
 				} else {
