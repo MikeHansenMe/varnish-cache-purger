@@ -44,10 +44,14 @@ function vp_purge_now() {
 
 function vp_main_menu() {
 
-	echo '<form name="varnish-purge" action="admin.php?page=varnish-purger" method="POST">
+	echo '<form name="varnish-purge" action="admin.php?page=varnish-cache-purger" method="POST">
 		<input type="text" name="vp_page" placeholder="Enter URL" />
 		<input type="hidden" name="vp_purge" value="true" />
 		<input type="submit" name="vp_submit" value="Purge Now" />
 		</form>';	
 
+	echo '<form name="varnish-purge-all" action="admin.php?page=varnish-cache-purger" method="POST">
+		<input type="hidden" name="vp_purge_all" value="true" />
+		<input type="submit" name="vp_submit" value="Purge All" />
+		</form>';
 }
