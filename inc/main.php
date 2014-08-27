@@ -5,7 +5,7 @@ function vp_purge_now() {
 
 	if( ! current_user_can( 'manage_options' ) ) { return; }
 
-	if( isset( $_POST['vp_submit'] ) && $_POST['vp_purge'] == 'true' ) {
+	if( isset( $_POST['vp_submit'] ) && $_POST['vp_purge'] == 'page' ) {
 	
 		$vpip = $_SERVER['SERVER_ADDR'];
 		$page = $_POST['vp_page'];
@@ -38,6 +38,18 @@ function vp_purge_now() {
 				add_action( 'admin_notices', 'vp_url_req' );
 			}
 		}
+	} else if( isset( $_POST['vp_submit'] ) && $_POST['vp_purge'] == 'all' ) {
+
+		$vpip = $_SERVER['SERVER_ADDR'];
+		$page = get_option( 'siteurl' ) . '/*';
+		print $page;
+		$res = curl_init( $page );
+		//curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'PURGE' );
+		$content = curl_exec( $res );
+		$info = curl_getinfo( $res );
+		curl_close( $res );
+		print_r( $info );
 	}
 }
 
@@ -46,12 +58,12 @@ function vp_main_menu() {
 
 	echo '<form name="varnish-purge" action="admin.php?page=varnish-cache-purger" method="POST">
 		<input type="text" name="vp_page" placeholder="Enter URL" />
-		<input type="hidden" name="vp_purge" value="true" />
+		<input type="hidden" name="vp_purge" value="page" />
 		<input type="submit" name="vp_submit" value="Purge Now" />
 		</form>';	
 
 	echo '<form name="varnish-purge-all" action="admin.php?page=varnish-cache-purger" method="POST">
-		<input type="hidden" name="vp_purge_all" value="true" />
+		<input type="hidden" name="vp_purge" value="all" />
 		<input type="submit" name="vp_submit" value="Purge All" />
 		</form>';
 }
