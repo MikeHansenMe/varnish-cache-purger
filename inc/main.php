@@ -42,14 +42,13 @@ function vp_purge_now() {
 
 		$vpip = $_SERVER['SERVER_ADDR'];
 		$page = get_option( 'siteurl' ) . '/*';
-		print $page;
+
 		$res = curl_init( $page );
-		//curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'PURGE' );
 		$content = curl_exec( $res );
 		$info = curl_getinfo( $res );
 		curl_close( $res );
-		print_r( $info );
 	}
 }
 

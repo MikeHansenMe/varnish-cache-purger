@@ -16,4 +16,5 @@ define( 'VP_BASE_URL', plugin_dir_url( __FILE__ ) );
 
 require_once( VP_BASE_DIR . 'inc/menu.php' );
 require_once( VP_BASE_DIR . 'inc/main.php' );
+require_once( VP_BASE_DIR . 'inc/admin-bar.php' );
 require_once( VP_BASE_DIR . 'inc/errors.php' );
