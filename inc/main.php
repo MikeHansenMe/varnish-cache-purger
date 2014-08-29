@@ -7,7 +7,6 @@ function vp_purge_now() {
 
 	if( isset( $_POST['vp_submit'] ) && $_POST['vp_purge'] == 'page' ) {
 	
-		$vpip = $_SERVER['SERVER_ADDR'];
 		$page = $_POST['vp_page'];
 
 		if( empty( $_POST['vp_page'] ) ) {
@@ -40,15 +39,28 @@ function vp_purge_now() {
 		}
 	} else if( isset( $_POST['vp_submit'] ) && $_POST['vp_purge'] == 'all' ) {
 
-		$vpip = $_SERVER['SERVER_ADDR'];
-		$page = get_option( 'siteurl' ) . '/*';
+		$page = get_option( 'siteurl' );
 
 		$res = curl_init( $page );
 		curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'PURGE' );
+		curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'BAN' );
 		$content = curl_exec( $res );
 		$info = curl_getinfo( $res );
 		curl_close( $res );
+
+		if( $info['http_code'] == '200' ) {
+                        add_action( 'admin_notices', 'vp_200' );
+                        return;
+                } else if( $info['http_code'] == '404' ) {
+                        add_action( 'admin_notices', 'vp_404' );
+                        return;
+                } else if( $info['http_code'] == '405' ) {
+                        add_action( 'admin_notices', 'vp_405' );
+                        return;
+                } else {
+                        add_action( 'admin_notices', 'vp_general_error' );
+                        return;
+                }
 	}
 }
 
