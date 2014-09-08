@@ -7,27 +7,36 @@ function vp_purge_now() {
 
 	if( isset( $_POST['vp_submit'] ) && $_POST['vp_purge'] == 'page' ) {
 	
-		$page = $_POST['vp_page'];
+		$url = $_POST['vp_page'];
+		if( is_ssl() == 'true' ) {
+			$page = 'https://' . preg_replace('#^.*://#', '', $url);
+		} else {
+			$page = 'http://' . preg_replace('#^.*://#', '', $url);
+		}
 
 		if( empty( $_POST['vp_page'] ) ) {
 			add_action( 'admin_notices', 'vp_url_req' );
 			return;
 		} else {
-			$res = curl_init( $page );
-			curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'PURGE' );
-			$content = curl_exec( $res );
-			$info = curl_getinfo( $res );
-			curl_close( $res );
+
+//			Here is the curl session for reference.
+//			$res = curl_init( $page );
+//			curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
+//			curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'PURGE' );
+//			$content = curl_exec( $res );
+//			$info = curl_getinfo( $res );
+//			curl_close( $res );
+
+			$info = wp_remote_request( $page, array( 'method' => 'PURGE', 'host' => home_url() ) );
 
 			if ( ! empty( $info ) ) {
-				if( $info['http_code'] == '404' ) {
+				if( $info['response']['code'] == '404' ) {
 					add_action( 'admin_notices', 'vp_404' );
 					return;
-				} else if ( $info['http_code'] == '405' ) {
+				} else if ( $info['response']['code'] == '405' ) {
 					add_action( 'admin_notices', 'vp_405' );
 					return;
-				} else if ( $info['http_code'] == '200' ) {
+				} else if ( $info['response']['code'] == '200' ) {
 					add_action( 'admin_notices', 'vp_200' );
 					return;
 				} else {
@@ -40,27 +49,28 @@ function vp_purge_now() {
 	} else if( isset( $_POST['vp_submit'] ) && $_POST['vp_purge'] == 'all' ) {
 
 		$page = get_option( 'siteurl' );
+		$info = wp_remote_request( $page, array( 'method' => 'BAN', 'host' => home_url() ) );
+		print_r($info['response']['code']);
+//		$res = curl_init( $page );
+//		curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
+//		curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'BAN' );
+//		$content = curl_exec( $res );
+//		$info = curl_getinfo( $res );
+//		curl_close( $res );
 
-		$res = curl_init( $page );
-		curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'BAN' );
-		$content = curl_exec( $res );
-		$info = curl_getinfo( $res );
-		curl_close( $res );
-
-		if( $info['http_code'] == '200' ) {
-                        add_action( 'admin_notices', 'vp_200' );
-                        return;
-                } else if( $info['http_code'] == '404' ) {
-                        add_action( 'admin_notices', 'vp_404' );
-                        return;
-                } else if( $info['http_code'] == '405' ) {
-                        add_action( 'admin_notices', 'vp_405' );
-                        return;
-                } else {
-                        add_action( 'admin_notices', 'vp_general_error' );
-                        return;
-                }
+		if( $info['response']['code'] == '200' ) {
+			add_action( 'admin_notices', 'vp_200' );
+			return;
+		} else if( $info['response']['code'] == '404' ) {
+			add_action( 'admin_notices', 'vp_404' );
+			return;
+		} else if( $info['response']['code'] == '405' ) {
+			add_action( 'admin_notices', 'vp_405' );
+			return;
+		} else {
+			add_action( 'admin_notices', 'vp_general_error' );
+			return;
+		}
 	}
 }
 
