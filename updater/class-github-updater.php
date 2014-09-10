@@ -1,4 +1,6 @@
-tHub Updater
+<?php
+ /*
+ * GitHub Updater
  *
  * @package   GitHub_Updater
  * @author    Andy Fragen
