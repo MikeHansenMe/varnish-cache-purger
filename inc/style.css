@@ -1,0 +1,18 @@
+.vp-purge-page {
+	width: 50%;
+	background-color: blue;
+	padding: 15px;
+}
+
+.vp-purge-page input {
+}
+
+.vp-purge-all {
+	width: 50%;
+	background-color: blue;
+	padding: 15px;
+}
+
+.vp-purge-all input {
+	width: 100%;
+}
