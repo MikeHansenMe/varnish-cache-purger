@@ -50,7 +50,7 @@ function vp_purge_now() {
 
 		$page = get_option( 'siteurl' );
 		$info = wp_remote_request( $page, array( 'method' => 'BAN', 'host' => home_url() ) );
-		print_r($info['response']['code']);
+
 //		$res = curl_init( $page );
 //		curl_setopt( $res, CURLOPT_RETURNTRANSFER, true );
 //		curl_setopt( $res, CURLOPT_CUSTOMREQUEST, 'BAN' );
@@ -74,17 +74,24 @@ function vp_purge_now() {
 	}
 }
 
+function vp_scripts() {
+	wp_enqueue_style( 'vp-styles', VP_BASE_URL . 'inc/style.css' );
+}
+add_action( 'admin_init', 'vp_scripts' );
 
 function vp_main_menu() {
 
-	echo '<form name="varnish-purge" action="admin.php?page=varnish-cache-purger" method="POST">
+	echo '<div class="vp-purge-page"><form name="varnish-purge" action="admin.php?page=varnish-cache-purger" method="POST">
 		<input type="text" name="vp_page" placeholder="Enter URL" />
 		<input type="hidden" name="vp_purge" value="page" />
 		<input type="submit" name="vp_submit" value="Purge Now" />
-		</form>';	
+		</form></div>';
 
-	echo '<form name="varnish-purge-all" action="admin.php?page=varnish-cache-purger" method="POST">
+	echo '<div class="vp-purge-all"><form name="varnish-purge-all" action="admin.php?page=varnish-cache-purger" method="POST">
 		<input type="hidden" name="vp_purge" value="all" />
 		<input type="submit" name="vp_submit" value="Purge All" />
-		</form>';
+		</form></div>';
+
+	echo '<div class="vp-purge-info"><p>Varnish is an advanced caching system that increases your site performance. Sometimes changes to your site may not show immediately because you are looking at a cached version. You can either wait for the object to be re-cached or you can use this plugin to clear your cache.</p><p>To use the "Purge Now" function, please use the full url to the file you want to clear. For example, if you need to clear this plugins stylesheet, you would enter: <br /> <code>' . VP_BASE_URL . 'inc/style.css</code></p><p>It is recommended that you use the "Purge All" function with caution, because it can take some time to rebuild your cache.</div>';
+
 }

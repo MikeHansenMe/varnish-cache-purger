@@ -14,7 +14,6 @@ function vp_adminbar_purge_all() {
 
 	if( isset( $_GET['vp_submit'] ) && $_GET['vp_purge'] == 'all' ) {
 		$info = wp_remote_request( $page, array( 'method' => 'BAN', 'host' => home_url() ) );
-	
 
 /*
 		Here is the curl session for reference.
@@ -54,7 +53,7 @@ function vp_adminbar( $wp_admin_bar ) {
 	$args = array(
 		'id'	=> 'varnish_cache_purger',
 		'title' => 'Varnish Cache Purger',
-		'href'	=> '?vp_purge=all&vp_submit=true',
+		'href'	=> add_query_arg( array( 'vp_purge' => 'all', 'vp_submit' => 'true' ) ),
 	);
 	$wp_admin_bar->add_node( $args );
 }
