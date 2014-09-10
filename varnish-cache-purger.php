@@ -4,7 +4,7 @@
 Plugin Name: Varnish Cache Purger
 Plugin URI: https://github.com/voldemortensen/varnish-cache-purger
 Description: Purges your varnish cache on demand.
-Version: 0.3
+Version: 0.4
 Author: Garth Mortensen
 GitHub Plugin URI: https://github.com/voldemortensen/varnish-cache-purger
 GitHub Branch: master
